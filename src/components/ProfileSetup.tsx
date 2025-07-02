@@ -6,7 +6,7 @@ import { toast } from "sonner";
 export function ProfileSetup() {
   const [formData, setFormData] = useState({
     name: "",
-    surname: "",       // NEW
+    surname: "",
     age: "",
     bio: "",
     intent: "",
@@ -15,6 +15,8 @@ export function ProfileSetup() {
     state: "",
     country: "",
     interests: "",
+    occupation: "",        // NEW
+    education: "",         // NEW
   });
 
   const createProfile = useMutation(api.profiles.createOrUpdateProfile);
@@ -22,7 +24,13 @@ export function ProfileSetup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.surname || !formData.age || !formData.bio || !formData.intent) {
+    if (
+      !formData.name ||
+      !formData.surname ||
+      !formData.age ||
+      !formData.bio ||
+      !formData.intent
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -30,17 +38,24 @@ export function ProfileSetup() {
     try {
       await createProfile({
         name: formData.name,
-        surname: formData.surname,  // NEW
+        surname: formData.surname,
         age: parseInt(formData.age),
         bio: formData.bio,
         intent: formData.intent,
         phone: formData.phone || undefined,
-        location: formData.city ? {
-          city: formData.city,
-          state: formData.state,
-          country: formData.country,
-        } : undefined,
-        interests: formData.interests.split(",").map(i => i.trim()).filter(Boolean),
+        location: formData.city
+          ? {
+              city: formData.city,
+              state: formData.state,
+              country: formData.country,
+            }
+          : undefined,
+        interests: formData.interests
+          .split(",")
+          .map((i) => i.trim())
+          .filter(Boolean),
+        occupation: formData.occupation,   // NEW
+        education: formData.education,     // NEW
       });
 
       toast.success("Profile created successfully!");
@@ -199,6 +214,32 @@ export function ProfileSetup() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
+
+          {/* New Fields Start */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Occupation
+            </label>
+            <input
+              type="text"
+              value={formData.occupation}
+              onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Education Qualification
+            </label>
+            <input
+              type="text"
+              value={formData.education}
+              onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          {/* New Fields End */}
 
           <button
             type="submit"
