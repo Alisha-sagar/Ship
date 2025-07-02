@@ -2,6 +2,23 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+/** Unicode-safe Base64 encode/decode helpers (btoa/atob compatible) */
+function encodeBase64Unicode(str: string): string {
+  return btoa(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
+      String.fromCharCode(parseInt(p1, 16))
+    )
+  );
+}
+
+function decodeBase64Unicode(str: string): string {
+  return decodeURIComponent(
+    Array.prototype.map
+      .call(atob(str), (c: string) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+      .join("")
+  );
+}
+
 // Send a message
 export const sendMessage = mutation({
   args: {
@@ -23,8 +40,7 @@ export const sendMessage = mutation({
 
     const receiverId = match.user1Id === senderId ? match.user2Id : match.user1Id;
 
-    // Simple encoding instead of Buffer
-    const encryptedContent = btoa(args.content);
+    const encryptedContent = encodeBase64Unicode(args.content);
 
     await ctx.db.insert("messages", {
       matchId: args.matchId,
@@ -54,9 +70,7 @@ export const getMessages = query({
     const match = await ctx.db.get(args.matchId);
     if (!match) return [];
 
-    if (match.user1Id !== userId && match.user2Id !== userId) {
-      return [];
-    }
+    if (match.user1Id !== userId && match.user2Id !== userId) return [];
 
     const limit = args.limit || 50;
 
@@ -68,7 +82,7 @@ export const getMessages = query({
 
     const decryptedMessages = await Promise.all(
       messages.map(async (message) => {
-        const decryptedContent = atob(message.content);
+        const decryptedContent = decodeBase64Unicode(message.content);
 
         let attachmentUrl = null;
         if (message.attachmentId) {
@@ -99,16 +113,13 @@ export const markMessagesAsRead = mutation({
     const unreadMessages = await ctx.db
       .query("messages")
       .withIndex("by_match", (q) => q.eq("matchId", args.matchId))
-      .filter((q) => 
-        q.and(
-          q.eq(q.field("receiverId"), userId),
-          q.eq(q.field("isRead"), false)
-        )
+      .filter((q) =>
+        q.and(q.eq(q.field("receiverId"), userId), q.eq(q.field("isRead"), false))
       )
       .collect();
 
     await Promise.all(
-      unreadMessages.map(message => 
+      unreadMessages.map((message) =>
         ctx.db.patch(message._id, { isRead: true })
       )
     );
@@ -149,9 +160,10 @@ export const getConversations = query({
 
         if (!profile) return null;
 
-        const firstPhotoUrl = profile.photos.length > 0 
-          ? await ctx.storage.getUrl(profile.photos[0])
-          : null;
+        const firstPhotoUrl =
+          profile.photos.length > 0
+            ? await ctx.storage.getUrl(profile.photos[0])
+            : null;
 
         const lastMessage = await ctx.db
           .query("messages")
@@ -162,7 +174,7 @@ export const getConversations = query({
         const unreadCount = await ctx.db
           .query("messages")
           .withIndex("by_match", (q) => q.eq("matchId", match._id))
-          .filter((q) => 
+          .filter((q) =>
             q.and(
               q.eq(q.field("receiverId"), userId),
               q.eq(q.field("isRead"), false)
@@ -172,7 +184,7 @@ export const getConversations = query({
 
         let decryptedLastMessage = null;
         if (lastMessage) {
-          const decryptedContent = atob(lastMessage.content);
+          const decryptedContent = decodeBase64Unicode(lastMessage.content);
           decryptedLastMessage = {
             ...lastMessage,
             content: decryptedContent,
@@ -192,14 +204,16 @@ export const getConversations = query({
       })
     );
 
-    const validConversations = conversationsData.filter((conv): conv is NonNullable<typeof conv> => conv !== null);
+    const validConversations = conversationsData.filter(
+      (conv): conv is NonNullable<typeof conv> => conv !== null
+    );
 
     const withMessages = validConversations
-      .filter(conv => conv.hasMessages)
+      .filter((conv) => conv.hasMessages)
       .sort((a, b) => (b.lastMessage?.timestamp || 0) - (a.lastMessage?.timestamp || 0));
 
     const withoutMessages = validConversations
-      .filter(conv => !conv.hasMessages)
+      .filter((conv) => !conv.hasMessages)
       .sort((a, b) => b.match.matchedAt - a.match.matchedAt);
 
     return { withMessages, withoutMessages };
