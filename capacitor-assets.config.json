@@ -1,0 +1,5 @@
+{
+  "iconPath": "./assets/icon.png",
+  "splashBackgroundColor": "#ffffff",
+  "platforms": ["android"]
+}
