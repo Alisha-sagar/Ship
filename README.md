@@ -1,4 +1,4 @@
-# Ship - Tinder Clone Backend and Frontend
+# Ship - Dating App
   
 This is a project built with [Chef](https://chef.convex.dev) using [Convex](https://convex.dev) as its backend.
   
