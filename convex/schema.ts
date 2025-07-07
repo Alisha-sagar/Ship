@@ -12,6 +12,8 @@ const applicationTables = {
     bio: v.string(),
     intent: v.string(), // "dating", "friendship", "networking", etc.
     phone: v.optional(v.string()),
+    education: v.optional(v.string()),
+    occupation: v.optional(v.string()),
     photos: v.array(v.id("_storage")), // Array of photo storage IDs
     location: v.optional(v.object({
       city: v.string(),
