@@ -68,6 +68,8 @@ export const createOrUpdateProfile = mutation({
     bio: v.string(),
     intent: v.string(),
     phone: v.optional(v.string()),
+    education: v.optional(v.string()),
+    occupation: v.optional(v.string()),
     location: v.optional(v.object({
       city: v.string(),
       state: v.string(),
