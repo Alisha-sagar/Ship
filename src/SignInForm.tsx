@@ -9,9 +9,9 @@ export function SignInForm() {
   const [submitting, setSubmitting] = useState(false);
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-md mx-auto p-6 bg-white rounded-2xl shadow-xl">
       <form
-        className="flex flex-col gap-form-field"
+        className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           setSubmitting(true);
@@ -32,45 +32,63 @@ export function SignInForm() {
           });
         }}
       >
+        <h2 className="text-2xl font-bold text-center mb-4">
+          {flow === "signIn" ? "Welcome back 💕" : "Create your account 💘"}
+        </h2>
+
         <input
-          className="auth-input-field"
+          className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
           type="email"
           name="email"
-          placeholder="Email"
+          placeholder="Your email"
           required
         />
         <input
-          className="auth-input-field"
+          className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder="Your password"
           required
         />
-        <button className="auth-button" type="submit" disabled={submitting}>
-          {flow === "signIn" ? "Sign in" : "Sign up"}
+        <button
+          className="w-full py-3 rounded-xl bg-pink-500 text-white font-semibold hover:bg-pink-600 transition-colors disabled:opacity-50"
+          type="submit"
+          disabled={submitting}
+        >
+          {submitting
+            ? flow === "signIn"
+              ? "Signing in..."
+              : "Signing up..."
+            : flow === "signIn"
+            ? "💖 Sign in"
+            : "💌 Sign up"}
         </button>
-        <div className="text-center text-sm text-secondary">
-          <span>
-            {flow === "signIn"
-              ? "Don't have an account? "
-              : "Already have an account? "}
-          </span>
+
+        <div className="text-center text-sm text-gray-500 mt-2">
+          {flow === "signIn"
+            ? "Don't have an account?"
+            : "Already have an account?"}{" "}
           <button
             type="button"
-            className="text-primary hover:text-primary-hover hover:underline font-medium cursor-pointer"
+            className="text-pink-500 hover:underline font-medium"
             onClick={() => setFlow(flow === "signIn" ? "signUp" : "signIn")}
           >
             {flow === "signIn" ? "Sign up instead" : "Sign in instead"}
           </button>
         </div>
       </form>
-      <div className="flex items-center justify-center my-3">
-        <hr className="my-4 grow border-gray-200" />
-        <span className="mx-4 text-secondary">or</span>
-        <hr className="my-4 grow border-gray-200" />
+
+      <div className="flex items-center justify-center my-6">
+        <hr className="grow border-gray-200" />
+        <span className="mx-4 text-gray-400">or</span>
+        <hr className="grow border-gray-200" />
       </div>
-      <button className="auth-button" onClick={() => void signIn("anonymous")}>
-        Sign in anonymously
+
+      <button
+        className="w-full py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+        onClick={() => void signIn("anonymous")}
+      >
+        🕶️ Sign in anonymously
       </button>
     </div>
   );
