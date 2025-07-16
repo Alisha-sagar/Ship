@@ -10,11 +10,11 @@ const applicationTables = {
     surname: v.optional(v.string()),
     age: v.number(),
     bio: v.string(),
-    intent: v.string(), // "dating", "friendship", "networking", etc.
+    intent: v.string(),
     phone: v.optional(v.string()),
     education: v.optional(v.string()),
     occupation: v.optional(v.string()),
-    photos: v.array(v.id("_storage")), // Array of photo storage IDs
+    photos: v.array(v.id("_storage")),
     location: v.optional(v.object({
       city: v.string(),
       state: v.string(),
@@ -56,10 +56,16 @@ const applicationTables = {
     matchId: v.id("matches"),
     senderId: v.id("users"),
     receiverId: v.id("users"),
-    content: v.string(), // Encrypted content
+    content: v.string(),
     timestamp: v.number(),
     isRead: v.boolean(),
-    messageType: v.union(v.literal("text"), v.literal("image"), v.literal("emoji")),
+    messageType: v.union(
+      v.literal("text"),
+      v.literal("image"),
+      v.literal("emoji"),
+      v.literal("audio"),
+      v.literal("video")
+    ),
     attachmentId: v.optional(v.id("_storage")),
   })
     .index("by_match", ["matchId"])
