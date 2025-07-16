@@ -63,8 +63,8 @@ export function DiscoverTab() {
 
   if (!profileList || profileList.length === 0) {
     return (
-      <div className="space-y-6 px-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
+      <div className="min-h-screen bg-gradient-to-b from-pink-100 via-white to-blue-100 p-4 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <StatusStories />
           <div className="flex gap-2 w-full sm:w-auto">
             <input
@@ -85,7 +85,7 @@ export function DiscoverTab() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center h-[60vh] text-center rounded-xl bg-white shadow-md p-8">
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center rounded-xl bg-white shadow-lg p-8">
           <div className="text-[72px] mb-2">🔍</div>
           <h3 className="text-xl font-semibold text-gray-800">No profiles found</h3>
           <p className="text-gray-500 mt-1">
@@ -116,9 +116,9 @@ export function DiscoverTab() {
   const currentProfile = profileList[currentIndex];
 
   return (
-    <div className="space-y-6 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-pink-100 via-white to-blue-100 p-4 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <StatusStories />
         <div className="flex gap-2 w-full sm:w-auto">
           <input
@@ -177,7 +177,7 @@ export function DiscoverTab() {
       )}
 
       {/* Profile Card */}
-      <div className="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-200">
+      <div className="max-w-md mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 transition-all">
         <div className="relative h-96 bg-gray-200">
           {currentProfile.photos.length > 0 ? (
             <img
@@ -196,7 +196,7 @@ export function DiscoverTab() {
           >
             ⚠️
           </button>
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent text-white p-4">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-4">
             <h3 className="text-2xl font-bold">{currentProfile.name}, {currentProfile.age}</h3>
             <p className="text-sm">{currentProfile.intent}</p>
             {Array.isArray((currentProfile as any).intentHistory) && (currentProfile as any).intentHistory.length > 1 && (
@@ -224,7 +224,7 @@ export function DiscoverTab() {
                 {currentProfile.interests.map((interest, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 text-gray-800 text-xs rounded-full shadow-sm"
+                    className="px-3 py-1 bg-pink-100 text-pink-800 text-xs rounded-full shadow-sm"
                   >
                     {interest}
                   </span>
